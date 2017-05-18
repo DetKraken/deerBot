@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 
 '''
-DeerBot V 0.10 - KaTT/DetKraken
+DeerBot V 0.20 - KaTT/DetKraken
 Basic bot to neh at people and beg for food occationally
 
-Version 0.15~ - Added neh functionality & broke neh
+Version 0.20 - Pet "fully" implemented, create a way to add to it via deer commands?
+               Neh still broken
+
+Version 0.15 - Added neh functionality & broke neh
 Version 0.10 - First commit
 '''
 
@@ -29,26 +32,25 @@ class Deer():
         self.times_begged = 0
         self.neh_cooldown = 1
 
-    # If the rng is greater than 5 and the neh cooldown is less or equal 0 then neh!
+    # If the rng is greater than 7 and the neh cooldown is less or equal 0 then neh!
     def neh(self):
         rgn = randomint(0,10)
-        print(rgn)
-        if rgn < 5 and self.neh_cooldown <= 0:
+        if rgn < 7 and self.neh_cooldown <= 0:
 
             # vvvvFix this!!vvvv
-            channel.send_message('Neh!')
+            print('neh')
             # ^^^^Fix this!!^^^^
 
             self.times_nehd += 1
             self.neh_cooldown = self.cooldown_time
-        else:
-            print('neh_cooldown before = {}').format(self.neh_cooldown)
-            self.neh_cooldown -= randomint(0,3)
-            print('after {}').format(self.neh_cooldown)
 
-    # If pet replies with a message, make a list and change em up
+        # Else, subtract from cooldown by a randomized amount
+        else:
+            self.neh_cooldown -= randomint(0,3)
+
+    # If pet replies with a random message
     def pet(self, event):
-        event.msg.reply('*accepts ur grooms*')
+        event.msg.reply(randomwordget('pet',randomint(0,3)))
         self.times_pet += 1
 
     # If food is detected, beg
@@ -90,6 +92,13 @@ class DeerPlugin(Plugin):
 def randomint(min, max):
     random.seed()
     return random.randint(min, max)
+
+# Reads local .txt files, stores them in a list and returns a random one
+def randomwordget(type, rgn):
+    dir = 'wordlist/{}.txt'.format(type)
+    words = open(dir)
+    wordlist = words.readline().split(',')
+    return wordlist[rgn]
 
 # Deer created :^)
 deer = Deer()
